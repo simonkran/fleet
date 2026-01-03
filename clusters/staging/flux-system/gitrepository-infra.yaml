@@ -1,0 +1,18 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: infra
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  url: https://github.com/${GITHUB_ORG}/fleet-infra.git
+  ref:
+    branch: main
+  secretRef:
+    name: flux-system
+  ignore: |
+    # exclude all
+    /*
+    # include clusters dir
+    !/clusters

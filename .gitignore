@@ -1,0 +1,29 @@
+# Secrets and sensitive files
+*.secret
+*.key
+*.pem
+credentials.json
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Flux generated files
+.flux/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl

@@ -1,0 +1,19 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: apps
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  url: https://github.com/${GITHUB_ORG}/fleet-apps.git
+  ref:
+    # Use semver for production stability
+    semver: ">=1.0.0 <2.0.0"
+  secretRef:
+    name: flux-system
+  ignore: |
+    # exclude all
+    /*
+    # include clusters dir
+    !/clusters

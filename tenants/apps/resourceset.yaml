@@ -1,0 +1,29 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1alpha1
+kind: ResourceSet
+metadata:
+  name: apps
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  resources:
+    - apiVersion: v1
+      kind: Namespace
+      selector:
+        matchLabels:
+          toolkit.fluxcd.io/tenant: apps
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: GitRepository
+      selector:
+        matchLabels:
+          toolkit.fluxcd.io/tenant: apps
+    - apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      selector:
+        matchLabels:
+          toolkit.fluxcd.io/tenant: apps
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      selector:
+        matchLabels:
+          toolkit.fluxcd.io/tenant: apps
