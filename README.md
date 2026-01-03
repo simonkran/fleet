@@ -77,7 +77,6 @@ Each cluster includes a `runtime-info` ConfigMap that stores environment-specifi
 - **Environment metadata**: `ENVIRONMENT`, `CLUSTER_NAME`, `CLUSTER_DOMAIN`
 - **Git references**: `INFRA_REF`, `APPS_REF` (branches for staging, semver for production)
 - **Reconciliation settings**: `RECONCILE_INTERVAL`, `RECONCILE_TIMEOUT`
-- **Feature flags**: `ENABLE_MULTITENANCY`, `ENABLE_NETWORK_POLICY`
 
 These variables are automatically substituted into GitRepository and Kustomization resources using Flux's `postBuild.substituteFrom` feature, enabling:
 - Single source of truth for environment configuration

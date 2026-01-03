@@ -28,7 +28,3 @@ data:
   # Reconciliation settings
   RECONCILE_INTERVAL: 5m
   RECONCILE_TIMEOUT: 5m
-
-  # Feature flags
-  ENABLE_MULTITENANCY: "true"
-  ENABLE_NETWORK_POLICY: "true"
