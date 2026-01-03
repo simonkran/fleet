@@ -1,0 +1,34 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flux-runtime-info
+  namespace: flux-system
+  labels:
+    toolkit.fluxcd.io/runtime: "true"
+    reconcile.fluxcd.io/watch: Enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: "Merge"
+data:
+  # Environment identifier
+  ENVIRONMENT: staging
+
+  # Git repository configuration
+  GITHUB_ORG: ${GITHUB_ORG}
+  GIT_REF: refs/heads/main
+
+  # Cluster information
+  CLUSTER_NAME: staging-cluster
+  CLUSTER_DOMAIN: staging.cluster.local
+
+  # Artifact and versioning
+  INFRA_REF: main
+  APPS_REF: main
+
+  # Reconciliation settings
+  RECONCILE_INTERVAL: 5m
+  RECONCILE_TIMEOUT: 5m
+
+  # Feature flags
+  ENABLE_MULTITENANCY: "true"
+  ENABLE_NETWORK_POLICY: "true"

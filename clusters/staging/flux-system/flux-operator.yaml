@@ -1,0 +1,55 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flux-operator-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: flux-operator
+  namespace: flux-operator-system
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: flux-operator
+  namespace: flux-operator-system
+spec:
+  type: oci
+  interval: 10m0s
+  url: oci://ghcr.io/controlplaneio-fluxcd/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: flux-operator
+  namespace: flux-operator-system
+spec:
+  interval: 30m0s
+  retryInterval: 3m0s
+  serviceAccountName: flux-operator
+  chart:
+    spec:
+      chart: flux-operator
+      sourceRef:
+        kind: HelmRepository
+        name: flux-operator
+      version: '*'
+      interval: 10m0s
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+    force: true
+  values:
+    multitenancy:
+      enabled: true
+      defaultServiceAccount: flux-operator
+    reportingController:
+      create: true
+      interval: 45s

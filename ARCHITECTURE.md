@@ -144,6 +144,51 @@ fleet-apps/
 
 ## Design Decisions
 
+### Runtime Configuration with PostBuild Substitution
+
+**Decision**: Use ConfigMap-based runtime configuration with Flux postBuild substitution
+
+**Implementation**:
+- Each cluster has a `runtime-info.yaml` ConfigMap with environment-specific variables
+- GitRepository and Kustomization resources reference these variables (e.g., `${RECONCILE_INTERVAL}`)
+- Flux's `postBuild.substituteFrom` feature automatically replaces variables at reconciliation time
+
+**Rationale**:
+- **Single source of truth**: All environment config in one place per cluster
+- **DRY principle**: Avoid duplicating values across multiple resources
+- **Easy customization**: Change interval/refs/settings by editing one file
+- **Type safety**: Flux validates substitutions before applying
+- **GitOps-friendly**: Configuration changes tracked in Git
+
+**Example**:
+```yaml
+# runtime-info.yaml
+data:
+  RECONCILE_INTERVAL: 5m
+  INFRA_REF: main
+
+# gitrepository-infra.yaml
+spec:
+  interval: ${RECONCILE_INTERVAL}  # Becomes "5m" at runtime
+  ref:
+    branch: ${INFRA_REF}            # Becomes "main" at runtime
+```
+
+### Declarative Flux Operator Management
+
+**Decision**: Manage Flux Operator itself declaratively using HelmRelease
+
+**Rationale**:
+- **Full GitOps**: Operator lifecycle managed in Git alongside applications
+- **Automatic updates**: Operator updates when new versions are released
+- **Consistent approach**: Same pattern used for all Helm-based components
+- **Auditability**: Operator version changes tracked in Git history
+
+**Trade-offs**:
+- Requires initial manual bootstrap (chicken-and-egg problem)
+- Can use either quick install or declarative approach for initial setup
+- Once bootstrapped, operator manages itself via Flux
+
 ### Git-Based Delivery vs OCI Artifacts
 
 **Decision**: Use Git-based delivery with GitRepository resources

@@ -5,10 +5,10 @@ metadata:
   name: infra
   namespace: flux-system
 spec:
-  interval: 5m0s
+  interval: ${RECONCILE_INTERVAL}
   url: https://github.com/${GITHUB_ORG}/fleet-infra.git
   ref:
-    branch: main
+    branch: ${INFRA_REF}
   secretRef:
     name: flux-system
   ignore: |

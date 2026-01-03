@@ -16,3 +16,8 @@ spec:
   retryInterval: 5m0s
   dependsOn:
     - name: infra
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: flux-runtime-info
+        optional: false

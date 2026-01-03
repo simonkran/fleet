@@ -71,6 +71,27 @@ Multi-tenant organization using ResourceSet resources:
 - `platform`: Platform team infrastructure and tooling
 - `apps`: Application team deployments
 
+### Runtime Configuration (runtime-info.yaml)
+
+Each cluster includes a `runtime-info` ConfigMap that stores environment-specific variables:
+- **Environment metadata**: `ENVIRONMENT`, `CLUSTER_NAME`, `CLUSTER_DOMAIN`
+- **Git references**: `INFRA_REF`, `APPS_REF` (branches for staging, semver for production)
+- **Reconciliation settings**: `RECONCILE_INTERVAL`, `RECONCILE_TIMEOUT`
+- **Feature flags**: `ENABLE_MULTITENANCY`, `ENABLE_NETWORK_POLICY`
+
+These variables are automatically substituted into GitRepository and Kustomization resources using Flux's `postBuild.substituteFrom` feature, enabling:
+- Single source of truth for environment configuration
+- Easy environment-specific customization
+- Simplified cluster configuration management
+
+### Declarative Flux Operator Installation
+
+The Flux Operator itself is managed declaratively using a HelmRelease resource (`flux-operator.yaml`):
+- Pulls the operator from OCI Helm registry
+- Configures multitenancy and reporting settings
+- Enables automatic operator updates
+- Provides GitOps-based operator lifecycle management
+
 ## Prerequisites
 
 - Kubernetes cluster(s) with cluster-admin access
@@ -82,11 +103,21 @@ Multi-tenant organization using ResourceSet resources:
 
 ### 1. Install Flux Operator
 
-Install the Flux Operator on your target cluster:
+**Option A: Quick Install (recommended for initial bootstrap)**
 
 ```bash
 kubectl apply -f https://github.com/controlplaneio/flux-operator/releases/latest/download/install.yaml
 ```
+
+**Option B: Declarative Install (GitOps-managed operator)**
+
+For GitOps-managed Flux Operator lifecycle:
+
+```bash
+kubectl apply -f clusters/staging/flux-system/flux-operator.yaml
+```
+
+This installs the operator using a HelmRelease, enabling automatic updates and declarative management. Once bootstrapped, the operator will be managed by Flux itself.
 
 ### 2. Create Git Credentials Secret
 
@@ -169,6 +200,26 @@ flux logs --all-namespaces --follow
 1. Make changes to this fleet repository (cluster configs, tenants, etc.)
 2. Commit and push to `main` branch
 3. Flux reconciles cluster configurations automatically
+
+### Customizing Runtime Configuration
+
+To modify environment-specific settings, edit the `runtime-info.yaml` ConfigMap for each cluster:
+
+**Example: Change reconciliation interval for staging**
+```yaml
+# clusters/staging/flux-system/runtime-info.yaml
+data:
+  RECONCILE_INTERVAL: 3m  # Changed from 5m to 3m
+```
+
+**Example: Update cluster domain**
+```yaml
+# clusters/production/flux-system/runtime-info.yaml
+data:
+  CLUSTER_DOMAIN: prod.example.com
+```
+
+After committing changes, Flux automatically applies the new configuration and reconciles affected resources. The `postBuild.substituteFrom` feature ensures all GitRepository and Kustomization resources use the updated values.
 
 ## Multi-Tenancy
 

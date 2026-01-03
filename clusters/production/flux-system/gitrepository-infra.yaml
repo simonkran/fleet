@@ -5,11 +5,11 @@ metadata:
   name: infra
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: ${RECONCILE_INTERVAL}
   url: https://github.com/${GITHUB_ORG}/fleet-infra.git
   ref:
     # Use semver for production stability
-    semver: ">=1.0.0 <2.0.0"
+    semver: ${INFRA_REF}
   secretRef:
     name: flux-system
   ignore: |
