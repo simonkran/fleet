@@ -4,6 +4,9 @@ kind: GitRepository
 metadata:
   name: infra
   namespace: flux-system
+  labels:
+    environment: ${ENVIRONMENT}
+    cluster: ${CLUSTER_NAME}
 spec:
   interval: ${RECONCILE_INTERVAL}
   url: https://github.com/${GITHUB_ORG}/fleet-infra.git

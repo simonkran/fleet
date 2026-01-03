@@ -4,9 +4,12 @@ kind: Kustomization
 metadata:
   name: apps
   namespace: flux-system
+  labels:
+    environment: ${ENVIRONMENT}
+    cluster: ${CLUSTER_NAME}
 spec:
   interval: 30m0s
-  timeout: 10m0s
+  timeout: ${RECONCILE_TIMEOUT}
   sourceRef:
     kind: GitRepository
     name: apps

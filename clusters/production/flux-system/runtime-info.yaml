@@ -15,7 +15,6 @@ data:
 
   # Git repository configuration
   GITHUB_ORG: ${GITHUB_ORG}
-  GIT_REF: refs/heads/main
 
   # Cluster information
   CLUSTER_NAME: production-cluster
